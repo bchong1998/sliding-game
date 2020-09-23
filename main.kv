@@ -1,0 +1,89 @@
+Screenmanager:
+    LoadPicture:
+    DisplayPicture:
+    ScrambledPicture:
+<LoadPicture>:
+    name: "Load Picture"
+    id: loadpicture
+    orientation: 'horizontal'
+    BoxLayout:
+        padding: 5
+        id: my_image
+        size_hint:1,1
+        FileChooserIconView:
+            id:filechooser
+            size_hint: 0.3,1
+            on_selection: loadpicture.selected(filechooser.selection)
+        Image:
+            name: "img"
+            size_hint: 0.6,1
+            pos_hint: {'centre_y':1,'centre_x':0.5}
+            allow_stretch: True
+            id: img
+            source: ""
+        Button:
+            text:"Go!"
+            size_hint: 0.1,0.1
+            on_release:
+                app.root.current = "Display Picture"
+                root.manager.transition.direction = "left"
+                
+
+
+<DisplayPicture>:
+    name: "Display Picture"
+    id: displaypicture
+    GridLayout:
+        rows: 2
+        Image:
+            name: "image2"
+            id: img2
+            allow_stretch: True
+            size_hint_y: None
+            height: 500
+        GridLayout:
+            cols:2
+            Button:
+                name: "Choose another picture"
+                text: "Choose another picture"
+                id: chooseanother
+                pos_hint: {'left':1}
+                on_release:
+                    app.root.current = "Load Picture"
+                    root.manager.transition.direction = "right"
+            Button:
+                id: scramble
+                name: "Scramble"
+                text: "Scramble"
+                pos_hint: {'right':1}
+                on_release:
+                    displaypicture.make_square(im = img2.source)
+                    displaypicture.crop_image()
+                    
+                    app.root.current = "Scrambled Picture"
+                    root.manager.transition.direction = "left"
+
+<ScrambledPicture>:
+    name: "Scrambled Picture"
+    id: scrambledpicture
+    FloatLayout:
+        Button:
+            text: "Original Image"
+            size_hint: 0.3,0.1
+            pos: 0,0
+            on_release:
+                app.root.current = "Display Picture"
+                root.manager.transition.direction = "right"
+        Button:
+            text: "Show scrambled image"
+            size_hint: 0.3,0.1
+            pos: (455,0)
+            on_release:
+                scrambledpicture.change_tile_image()
+        Button:
+            text: "Close and Delete"
+            size_hint: 0.3,0.1
+            pos: (455,585)
+            on_release:
+                scrambledpicture.closeAndDeleteFiles()
+                exit()
